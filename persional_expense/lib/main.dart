@@ -16,15 +16,17 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: Colors.pink,
         fontFamily: "Montserrat",
+        errorColor: Colors.red,
         textTheme: ThemeData.light().textTheme.copyWith(
               titleMedium: const TextStyle(
                   fontFamily: "Montserrat",
                   fontWeight: FontWeight.bold,
                   fontSize: 18),
               titleSmall: const TextStyle(
-                  fontFamily: "Montserrat",
-                  fontWeight: FontWeight.normal,
-                  fontSize: 14),
+                fontFamily: "Montserrat",
+                fontWeight: FontWeight.normal,
+                fontSize: 14,
+              ),
             ),
         appBarTheme: const AppBarTheme(
             backgroundColor: Colors.pink,
@@ -66,11 +68,12 @@ class _MyHomePageState extends State<MyHomePage> {
     }).toList();
   }
 
-  void _addNewTransaction(String txTitle, double txAmount) {
+  void _addNewTransaction(
+      String txTitle, double txAmount, DateTime chosenDate) {
     final newTx = Transaction(
       title: txTitle,
       amount: txAmount,
-      dateTime: DateTime.now(),
+      dateTime: chosenDate,
       id: DateTime.now().toString(),
     );
 
@@ -93,6 +96,12 @@ class _MyHomePageState extends State<MyHomePage> {
         });
   }
 
+  void _deleteTransaction(String id) {
+    setState(() {
+      _userTransactions.removeWhere((item) => item.id == id);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -111,12 +120,18 @@ class _MyHomePageState extends State<MyHomePage> {
             children: <Widget>[
               // ignore: sized_box_for_whitespace
               Chart(recentTransactions: _recentTransactions),
-              TransactionList(transactions: _userTransactions),
+              TransactionList(
+                transactions: _userTransactions,
+                deleteTx: _deleteTransaction,
+              ),
             ]),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add_box_rounded),
+        child: const Icon(
+          Icons.add_box_rounded,
+          color: Colors.black,
+        ),
         onPressed: () => _startAddNewTransaction(context),
       ),
     );

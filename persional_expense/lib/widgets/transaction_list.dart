@@ -4,9 +4,11 @@ import 'package:intl/intl.dart';
 
 class TransactionList extends StatelessWidget {
   final List<Transaction> transactions;
-
+  final Function deleteTx;
   // ignore: prefer_const_constructors_in_immutables
-  TransactionList({Key? key, required this.transactions}) : super(key: key);
+  TransactionList(
+      {Key? key, required this.transactions, required this.deleteTx})
+      : super(key: key);
   @override
   Widget build(BuildContext context) {
     // ignore: sized_box_for_whitespace
@@ -31,42 +33,36 @@ class TransactionList extends StatelessWidget {
           : ListView.builder(
               itemBuilder: (item, index) {
                 return Card(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 20, horizontal: 40),
-                        margin: const EdgeInsets.symmetric(
-                            horizontal: 15, vertical: 10),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.black,
-                            width: 4,
+                  elevation: 5,
+                  margin:
+                      const EdgeInsets.symmetric(vertical: 8, horizontal: 5),
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: Theme.of(context).primaryColor,
+                      radius: 30,
+                      child: Padding(
+                        padding: const EdgeInsets.all(6),
+                        child: FittedBox(
+                          child: Text(
+                            "\$${transactions[index].amount}",
+                            style: Theme.of(context).textTheme.titleMedium,
                           ),
-                        ),
-                        child: Text(
-                          '\$' + transactions[index].amount.toStringAsFixed(2),
-                          style: Theme.of(context).appBarTheme.titleTextStyle,
                         ),
                       ),
-                      Column(
-                        children: [
-                          Container(
-                            margin: const EdgeInsets.only(bottom: 10),
-                            child: Text(
-                              transactions[index].title,
-                              style: Theme.of(context).textTheme.titleMedium,
-                            ),
-                          ),
-                          Text(
-                            DateFormat.yMMMd()
-                                .format(transactions[index].dateTime),
-                            style: Theme.of(context).textTheme.titleSmall,
-                          ),
-                        ],
-                      )
-                    ],
+                    ),
+                    title: Text(
+                      transactions[index].title,
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    subtitle: Text(
+                      DateFormat.yMMMd().format(transactions[index].dateTime),
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
+                    trailing: IconButton(
+                      icon: Icon(Icons.delete),
+                      color: Theme.of(context).errorColor,
+                      onPressed: () => deleteTx(transactions[index].id),
+                    ),
                   ),
                 );
               },
